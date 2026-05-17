@@ -10,3 +10,4 @@ htmlcov/
 *.egg
 .ruff_cache/
 .pyright/
+.claude/
