@@ -1,4 +1,4 @@
-"""SpecId extractor — 9 種プレフィックスの正規表現抽出。
+"""SpecId extractor — configurable プレフィックスの正規表現抽出。
 
 Traces: LIB-FR-04
 """
@@ -9,20 +9,28 @@ import re
 
 from .models import SpecId
 
-# Match prefixes US/FR/REQ/NFR/AR/EA/PR/PE/AD followed by hyphen,
-# digits, and optional single lowercase suffix letter.
-_SPEC_ID_PATTERN = re.compile(r"\b(US|FR|REQ|NFR|AR|EA|PR|PE|AD)-(\d+[a-z]?)\b")
+# デフォルトプレフィックス（プロジェクト非依存の汎用セット）
+_DEFAULT_PREFIXES = ["US", "FR", "REQ", "NFR", "AR", "EA", "PR", "PE", "AD"]
+
+_DEFAULT_PATTERN = re.compile(r"\b(US|FR|REQ|NFR|AR|EA|PR|PE|AD)-(\d+[a-z]?)\b")
 
 
-def extract_spec_ids(text: str) -> list[SpecId]:
+def _build_pattern(prefixes: list[str]) -> re.Pattern[str]:
+    group = "|".join(re.escape(p) for p in prefixes)
+    return re.compile(rf"\b({group})-(\d+[a-z]?)\b")
+
+
+def extract_spec_ids(text: str, prefixes: list[str] | None = None) -> list[SpecId]:
     """spec 全文から SpecId を網羅抽出する。
 
     Args:
         text: spec 全文
+        prefixes: 抽出する ID プレフィックス一覧。None の場合はデフォルト 9 種を使用
 
     Returns:
         List[SpecId]（重複は occurrence 単位で記録）
     """
+    pattern = _DEFAULT_PATTERN if prefixes is None else _build_pattern(prefixes)
     results: list[SpecId] = []
     # Pre-compute cumulative char-to-line lookup
     line_starts: list[int] = [0]
@@ -30,7 +38,7 @@ def extract_spec_ids(text: str) -> list[SpecId]:
         if ch == "\n":
             line_starts.append(i + 1)
 
-    for m in _SPEC_ID_PATTERN.finditer(text):
+    for m in pattern.finditer(text):
         value = m.group(0)
         id_type = m.group(1)
         # Find 1-based line number for the match start

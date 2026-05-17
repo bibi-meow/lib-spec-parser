@@ -128,9 +128,10 @@ class SpecParserExecutor:
                 raise
             raise ParseError(f"section_assembler failed: {e}") from e
 
-        # 7. SpecId 抽出
+        # 7. SpecId 抽出（prefixes は project-configurable）
         extract_ids_flag = params.get("extract_ids", True)
-        spec_ids = extract_spec_ids(text) if extract_ids_flag else []
+        spec_id_prefixes: list[str] | None = params.get("spec_id_prefixes") or None
+        spec_ids = extract_spec_ids(text, prefixes=spec_id_prefixes) if extract_ids_flag else []
 
         # 8. TraceTag 抽出
         trace_format = params.get("trace_format", "Traces:")

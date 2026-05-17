@@ -38,6 +38,32 @@ def test_no_match_returns_empty():
     assert ids == []
 
 
+def test_custom_prefixes_filter():
+    """spec_id_prefixes で抽出プレフィックスを絞り込める。"""
+    text = "US-01 FR-002 REQ-003 MYID-004"
+    ids = extract_spec_ids(text, prefixes=["MYID"])
+    assert len(ids) == 1
+    assert ids[0].value == "MYID-004"
+    assert ids[0].id_type == "MYID"
+
+
+def test_custom_prefixes_excludes_defaults():
+    """カスタム prefixes を指定するとデフォルト ID は抽出されない。"""
+    text = "US-01 FR-002 SRS-010"
+    ids = extract_spec_ids(text, prefixes=["SRS"])
+    values = [i.value for i in ids]
+    assert "SRS-010" in values
+    assert "US-01" not in values
+    assert "FR-002" not in values
+
+
+def test_none_prefixes_uses_defaults():
+    """prefixes=None でデフォルト 9 種プレフィックスが使われる。"""
+    text = "US-01 FR-002"
+    ids = extract_spec_ids(text, prefixes=None)
+    assert len(ids) == 2
+
+
 def test_word_boundary_no_false_match():
     # Should not match in the middle of a word
     text = "FUS-01 is not a spec id, but US-01 is."

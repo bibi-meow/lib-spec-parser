@@ -335,5 +335,18 @@
 
 ---
 
+## 決定 #16-1（Post-review: spec_id_prefixes を config から受け取るよう変更）
+
+- **What**: `spec_id_extractor.extract_spec_ids()` の ID プレフィックスを設定ファイルから変更可能にする
+- **Options considered**: A) デフォルト 9 種固定のまま維持 / B) config.params.spec_id_prefixes で上書き可能にする
+- **Decision**: B) configurable — `params.spec_id_prefixes: list[str] | None`（None = デフォルト 9 種）
+- **Rationale**: US-XX / FR-NNN 等はこのプロジェクト固有の ID 形式であり、他プロジェクト（例: MISRA-ID, SRS-NNN 等）では異なるプレフィックスを使う。pip ライブラリとして汎用性を確保するため configurable にする。
+- **Determinism**: D（正規表現を prefixes リストから決定論的に生成）
+- **Reviewable by**: tests/unit/test_spec_id_extractor.py の test_custom_prefixes_* 3 件で検証可能
+- **Traces from**: ユーザーフィードバック「specidのルールは決め打ちできないよね？」（2026-05-18）
+- **Traces to**: executor.py params.get("spec_id_prefixes"), spec_id_extractor.extract_spec_ids(prefixes=...)
+
+---
+
 <!-- 各工程で判断が生じるたびに ## 決定 #N-M エントリを追記する -->
 <!-- N = 工程番号（0-15）、M = その工程内の連番 -->
