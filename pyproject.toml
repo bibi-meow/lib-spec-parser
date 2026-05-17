@@ -5,30 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "lib-spec-parser"
 version = "0.1.0"
-description = "Parse and normalize specification documents (Markdown/YAML/RST) into a structured format"
-readme = "README.md"
-license = {text = "MIT"}
-authors = [{name = "bibi-meow"}]
+description = "spec-reviewer: spec-parser lib"
 requires-python = ">=3.11"
-keywords = ["specification", "parser", "requirements", "traceability", "gherkin", "ears"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Software Development :: Quality Assurance",
-]
 dependencies = []
 
-[project.urls]
-"Homepage" = "https://github.com/bibi-meow/lib-spec-parser"
-"Bug Tracker" = "https://github.com/bibi-meow/lib-spec-parser/issues"
-
 [project.optional-dependencies]
-dev = ["pytest>=8", "pytest-cov", "ruff>=0.4", "pyright>=1.1"]
+dev = ["pytest>=8", "pytest-cov"]
 
 [tool.setuptools.packages.find]
 where = ["."]
